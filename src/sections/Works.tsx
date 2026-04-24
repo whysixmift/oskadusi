@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowUpRight } from 'lucide-react';
-import { worksConfig } from '../config';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowUpRight } from "lucide-react";
+import { worksConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,8 +14,6 @@ export function Works() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const triggersRef = useRef<ScrollTrigger[]>([]);
 
-  if (!worksConfig.title || worksConfig.projects.length === 0) return null;
-
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -23,13 +21,13 @@ export function Works() {
     // Entry animation
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
         // Title letter animation
         if (titleRef.current) {
-          const chars = titleRef.current.querySelectorAll('.char');
+          const chars = titleRef.current.querySelectorAll(".char");
           tl.fromTo(
             chars,
             { scale: 0, opacity: 0 },
@@ -38,8 +36,8 @@ export function Works() {
               opacity: 1,
               duration: 0.6,
               stagger: 0.08,
-              ease: 'elastic.out(1, 0.5)',
-            }
+              ease: "elastic.out(1, 0.5)",
+            },
           );
         }
 
@@ -47,8 +45,8 @@ export function Works() {
         tl.fromTo(
           subtitleRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-          '-=0.3'
+          { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+          "-=0.3",
         );
 
         // Cards 3D flip
@@ -61,9 +59,9 @@ export function Works() {
                 rotateY: 0,
                 opacity: 1,
                 duration: 1,
-                ease: 'expo.out',
+                ease: "expo.out",
               },
-              `-=${0.85 - i * 0.15}`
+              `-=${0.85 - i * 0.15}`,
             );
           }
         });
@@ -75,8 +73,8 @@ export function Works() {
     // Scroll depth effect
     const scrollTrigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top bottom',
-      end: 'bottom top',
+      start: "top bottom",
+      end: "bottom top",
       scrub: 1,
       onUpdate: (self) => {
         cardsRef.current.forEach((card, i) => {
@@ -99,7 +97,7 @@ export function Works() {
 
   const handleMouseMove = (
     e: React.MouseEvent<HTMLDivElement>,
-    index: number
+    index: number,
   ) => {
     const card = cardsRef.current[index];
     if (!card) return;
@@ -112,7 +110,7 @@ export function Works() {
       rotateX: -y * 10,
       rotateY: x * 16,
       duration: 0.1,
-      ease: 'none',
+      ease: "none",
     });
   };
 
@@ -124,25 +122,31 @@ export function Works() {
       rotateX: 0,
       rotateY: 0,
       duration: 0.4,
-      ease: 'expo.out',
+      ease: "expo.out",
     });
     setHoveredIndex(null);
   };
 
-  const titleChars = worksConfig.title.split('');
+  if (!worksConfig.title || worksConfig.projects.length === 0) return null;
+
+  const titleChars = worksConfig.title.split("");
 
   return (
     <section
       ref={sectionRef}
       id="works"
-      className="relative py-32 px-8 lg:px-16 bg-white overflow-hidden"
-      style={{ perspective: '1200px' }}
+      className="relative py-32 px-8 lg:px-16 bg-[#0a0a0a] overflow-hidden"
+      style={{ perspective: "1200px" }}
     >
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-16">
+        <p className="text-body-sm text-white/20 font-mono mb-4 tracking-widest">
+          02
+        </p>
+        <div className="section-tag mb-6">Our Programs</div>
         <h2
           ref={titleRef}
-          className="text-h1 lg:text-display-xl text-black font-medium mb-6"
+          className="text-h1 lg:text-display-xl text-white font-medium mb-6"
         >
           {titleChars.map((char, i) => (
             <span key={i} className="char inline-block">
@@ -150,10 +154,7 @@ export function Works() {
             </span>
           ))}
         </h2>
-        <p
-          ref={subtitleRef}
-          className="text-body-lg text-black/60 max-w-2xl"
-        >
+        <p ref={subtitleRef} className="text-body-lg text-white/60 max-w-2xl">
           {worksConfig.subtitle}
         </p>
       </div>
@@ -168,19 +169,19 @@ export function Works() {
                 cardsRef.current[index] = el;
               }}
               className={`relative group cursor-pointer preserve-3d ${
-                index === 0 ? 'md:col-span-1 md:row-span-1' : ''
-              } ${index % 2 === 0 ? 'md:-translate-y-8' : 'md:translate-y-8'}`}
+                index === 0 ? "md:col-span-1 md:row-span-1" : ""
+              }`}
               style={{
-                transformStyle: 'preserve-3d',
-                willChange: 'transform',
+                transformStyle: "preserve-3d",
+                willChange: "transform",
                 transform:
                   hoveredIndex !== null && hoveredIndex !== index
                     ? `translateX(${(index - hoveredIndex) * 15}px)`
-                    : 'translateX(0)',
+                    : "translateX(0)",
                 transition:
                   hoveredIndex !== null
-                    ? 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                    : 'none',
+                    ? "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
+                    : "none",
               }}
               onMouseMove={(e) => handleMouseMove(e, index)}
               onMouseEnter={() => setHoveredIndex(index)}
@@ -220,8 +221,8 @@ export function Works() {
       </div>
 
       {/* Decorative elements */}
-      <div className="absolute top-20 left-0 w-32 h-32 bg-highlight/5 -translate-x-1/2" />
-      <div className="absolute bottom-20 right-0 w-48 h-48 bg-black/5 translate-x-1/3" />
+      <div className="absolute top-20 left-0 w-32 h-32 bg-highlight/8 -translate-x-1/2" />
+      <div className="absolute bottom-20 right-0 w-48 h-48 bg-white/[0.03] translate-x-1/3" />
     </section>
   );
 }

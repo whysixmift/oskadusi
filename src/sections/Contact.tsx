@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Send } from 'lucide-react';
-import { contactConfig } from '../config';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Send } from "lucide-react";
+import { contactConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,10 +18,10 @@ export function Contact() {
   const triggersRef = useRef<ScrollTrigger[]>([]);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    projectType: '',
-    message: '',
+    name: "",
+    email: "",
+    projectType: "",
+    message: "",
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export function Contact() {
 
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
@@ -41,15 +41,15 @@ export function Contact() {
         tl.fromTo(
           dividerRef.current,
           { height: 0 },
-          { height: '100%', duration: 1.2, ease: 'expo.inOut' }
+          { height: "100%", duration: 1.2, ease: "expo.inOut" },
         );
 
         // Form container slide
         tl.fromTo(
           formRef.current,
           { x: -60, opacity: 0 },
-          { x: 0, opacity: 1, duration: 0.8, ease: 'expo.out' },
-          '-=0.8'
+          { x: 0, opacity: 1, duration: 0.8, ease: "expo.out" },
+          "-=0.8",
         );
 
         // Image reveal
@@ -57,20 +57,20 @@ export function Contact() {
           imageRef.current,
           {
             scale: 1.1,
-            clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)',
+            clipPath: "polygon(100% 0, 100% 0, 100% 100%, 100% 100%)",
           },
           {
             scale: 1,
-            clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
             duration: 1,
-            ease: 'expo.out',
+            ease: "expo.out",
           },
-          '-=0.6'
+          "-=0.6",
         );
 
         // Title letter cascade
         if (titleRef.current) {
-          const chars = titleRef.current.querySelectorAll('.char');
+          const chars = titleRef.current.querySelectorAll(".char");
           tl.fromTo(
             chars,
             { opacity: 0, y: 20 },
@@ -79,9 +79,9 @@ export function Contact() {
               y: 0,
               duration: 0.8,
               stagger: 0.03,
-              ease: 'power2.out',
+              ease: "power2.out",
             },
-            '-=0.7'
+            "-=0.7",
           );
         }
 
@@ -89,8 +89,8 @@ export function Contact() {
         tl.fromTo(
           subtitleRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
-          '-=0.5'
+          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+          "-=0.5",
         );
 
         // Input fields stagger
@@ -99,8 +99,8 @@ export function Contact() {
             tl.fromTo(
               input,
               { y: 30, opacity: 0 },
-              { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
-              `-=${0.4 - i * 0.1}`
+              { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+              `-=${0.4 - i * 0.1}`,
             );
           }
         });
@@ -109,8 +109,8 @@ export function Contact() {
         tl.fromTo(
           buttonRef.current,
           { scale: 0 },
-          { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.5)' },
-          '-=0.3'
+          { scale: 1, duration: 0.6, ease: "elastic.out(1, 0.5)" },
+          "-=0.3",
         );
       },
       once: true,
@@ -120,8 +120,8 @@ export function Contact() {
     // Image parallax
     const parallaxTrigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top bottom',
-      end: 'bottom top',
+      start: "top bottom",
+      end: "bottom top",
       scrub: 1,
       onUpdate: (self) => {
         if (imageRef.current) {
@@ -141,18 +141,18 @@ export function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
   };
 
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const titleChars = contactConfig.title.split('');
+  const titleChars = contactConfig.title.split("");
 
   return (
     <section
@@ -165,20 +165,16 @@ export function Contact() {
           {/* Diagonal divider */}
           <div
             ref={dividerRef}
-            className="hidden lg:block absolute left-1/2 top-0 w-px bg-white/20"
+            className="hidden lg:block absolute left-1/2 top-0 w-px bg-white/10"
             style={{
-              transform: 'rotate(12deg) translateX(-50%)',
-              transformOrigin: 'top center',
-              willChange: 'height',
+              transform: "rotate(12deg) translateX(-50%)",
+              transformOrigin: "top center",
+              willChange: "height",
             }}
           />
 
           {/* Form side */}
-          <form
-            ref={formRef}
-            onSubmit={handleSubmit}
-            className="relative z-10"
-          >
+          <form ref={formRef} onSubmit={handleSubmit} className="relative z-10">
             {/* Title */}
             <h2
               ref={titleRef}
@@ -192,10 +188,7 @@ export function Contact() {
             </h2>
 
             {/* Subtitle */}
-            <p
-              ref={subtitleRef}
-              className="text-body-lg text-white/60 mb-12"
-            >
+            <p ref={subtitleRef} className="text-body-lg text-white/60 mb-12">
               {contactConfig.subtitle}
             </p>
 
@@ -210,9 +203,9 @@ export function Contact() {
               >
                 <label
                   className={`absolute left-0 transition-all duration-200 ${
-                    focusedField === 'name' || formData.name
-                      ? '-top-6 text-body-sm text-white'
-                      : 'top-3 text-body text-white/50'
+                    focusedField === "name" || formData.name
+                      ? "-top-6 text-body-sm text-white"
+                      : "top-3 text-body text-white/50"
                   }`}
                 >
                   {contactConfig.nameLabel}
@@ -222,14 +215,14 @@ export function Contact() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField('name')}
+                  onFocus={() => setFocusedField("name")}
                   onBlur={() => setFocusedField(null)}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors duration-300"
                   required
                 />
                 <div
                   className={`absolute bottom-0 left-0 h-px bg-white transition-all duration-300 ${
-                    focusedField === 'name' ? 'w-full' : 'w-0'
+                    focusedField === "name" ? "w-full" : "w-0"
                   }`}
                 />
               </div>
@@ -243,9 +236,9 @@ export function Contact() {
               >
                 <label
                   className={`absolute left-0 transition-all duration-200 ${
-                    focusedField === 'email' || formData.email
-                      ? '-top-6 text-body-sm text-white'
-                      : 'top-3 text-body text-white/50'
+                    focusedField === "email" || formData.email
+                      ? "-top-6 text-body-sm text-white"
+                      : "top-3 text-body text-white/50"
                   }`}
                 >
                   {contactConfig.emailLabel}
@@ -255,14 +248,14 @@ export function Contact() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField('email')}
+                  onFocus={() => setFocusedField("email")}
                   onBlur={() => setFocusedField(null)}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors duration-300"
                   required
                 />
                 <div
                   className={`absolute bottom-0 left-0 h-px bg-white transition-all duration-300 ${
-                    focusedField === 'email' ? 'w-full' : 'w-0'
+                    focusedField === "email" ? "w-full" : "w-0"
                   }`}
                 />
               </div>
@@ -276,9 +269,9 @@ export function Contact() {
               >
                 <label
                   className={`absolute left-0 transition-all duration-200 ${
-                    focusedField === 'projectType' || formData.projectType
-                      ? '-top-6 text-body-sm text-white'
-                      : 'top-3 text-body text-white/50'
+                    focusedField === "projectType" || formData.projectType
+                      ? "-top-6 text-body-sm text-white"
+                      : "top-3 text-body text-white/50"
                   }`}
                 >
                   {contactConfig.projectTypeLabel}
@@ -287,7 +280,7 @@ export function Contact() {
                   name="projectType"
                   value={formData.projectType}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField('projectType')}
+                  onFocus={() => setFocusedField("projectType")}
                   onBlur={() => setFocusedField(null)}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors duration-300 appearance-none cursor-pointer"
                 >
@@ -295,14 +288,18 @@ export function Contact() {
                     {contactConfig.projectTypePlaceholder}
                   </option>
                   {contactConfig.projectTypeOptions.map((option) => (
-                    <option key={option.value} value={option.value} className="bg-black">
+                    <option
+                      key={option.value}
+                      value={option.value}
+                      className="bg-black"
+                    >
                       {option.label}
                     </option>
                   ))}
                 </select>
                 <div
                   className={`absolute bottom-0 left-0 h-px bg-white transition-all duration-300 ${
-                    focusedField === 'projectType' ? 'w-full' : 'w-0'
+                    focusedField === "projectType" ? "w-full" : "w-0"
                   }`}
                 />
               </div>
@@ -316,9 +313,9 @@ export function Contact() {
               >
                 <label
                   className={`absolute left-0 transition-all duration-200 ${
-                    focusedField === 'message' || formData.message
-                      ? '-top-6 text-body-sm text-white'
-                      : 'top-3 text-body text-white/50'
+                    focusedField === "message" || formData.message
+                      ? "-top-6 text-body-sm text-white"
+                      : "top-3 text-body text-white/50"
                   }`}
                 >
                   {contactConfig.messageLabel}
@@ -327,14 +324,14 @@ export function Contact() {
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField('message')}
+                  onFocus={() => setFocusedField("message")}
                   onBlur={() => setFocusedField(null)}
                   rows={4}
                   className="w-full bg-transparent border-b border-white/20 py-3 text-white focus:outline-none focus:border-white transition-colors duration-300 resize-none"
                 />
                 <div
                   className={`absolute bottom-0 left-0 h-px bg-white transition-all duration-300 ${
-                    focusedField === 'message' ? 'w-full' : 'w-0'
+                    focusedField === "message" ? "w-full" : "w-0"
                   }`}
                 />
               </div>
@@ -344,11 +341,13 @@ export function Contact() {
             <button
               ref={buttonRef}
               type="submit"
-              className="mt-12 px-10 py-4 bg-white text-black text-body font-medium flex items-center gap-3 hover:bg-highlight hover:text-white transition-colors duration-300 relative overflow-hidden group"
+              className="mt-12 px-10 py-4 bg-highlight text-white text-body font-medium flex items-center gap-3 hover:bg-red-700 transition-colors duration-300 relative overflow-hidden group"
             >
-              <span className="relative z-10">{contactConfig.submitButtonText}</span>
+              <span className="relative z-10">
+                {contactConfig.submitButtonText}
+              </span>
               <Send className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-              <div className="absolute inset-0 bg-highlight transform -translate-x-full group-hover:translate-x-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]" />
+              <div className="absolute inset-0 bg-red-700 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]" />
             </button>
           </form>
 
@@ -356,7 +355,7 @@ export function Contact() {
           <div
             ref={imageRef}
             className="relative aspect-[2/3] lg:aspect-auto overflow-hidden"
-            style={{ willChange: 'transform, clip-path' }}
+            style={{ willChange: "transform, clip-path" }}
           >
             <img
               src={contactConfig.image}

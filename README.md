@@ -257,4 +257,4 @@ Place these images in the `public/` directory:
 - The `language` field in `siteConfig` controls the HTML `lang` attribute
 - Footer link icons are mapped by name: currently supports "Instagram" and "Dribbble"
 #   o s k a d u s i  
- 
+ # testprodoskadusi

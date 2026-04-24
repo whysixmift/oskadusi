@@ -1,0 +1,296 @@
+================================================================================
+  OSKADUSI — HOW TO ATTACH A CUSTOM DOMAIN
+  Guide for Hack Club Nest Server
+================================================================================
+
+This guide covers how to point a custom domain (e.g. oskadusi.sch.id or
+oskadusi.smkn2bekasi.sch.id) to your OSKADUSI site running on Hack Club Nest.
+
+--------------------------------------------------------------------------------
+  OVERVIEW
+--------------------------------------------------------------------------------
+
+The flow looks like this:
+
+  [User's Browser]
+       |
+       | visits oskadusi.sch.id
+       v
+  [Your Domain Registrar / DNS]
+       |
+       | DNS A record points to Hack Club Nest IP
+       v
+  [Hack Club Nest Server]
+       |
+       | nginx reverse proxy (port 80/443)
+       v
+  [Your Node.js app on port 3001]
+
+
+--------------------------------------------------------------------------------
+  STEP 1 — BUY OR GET A DOMAIN
+--------------------------------------------------------------------------------
+
+Options for Indonesian school domains:
+
+  a) .sch.id (official Indonesian school domain)
+     - Register at: https://register.sch.id
+     - Requires school letter / NPSN
+     - Recommended for official OSIS use
+
+  b) .com / .net / .id (commercial)
+     - Niagahoster:  https://www.niagahoster.co.id
+     - Domainesia:   https://www.domainesia.com
+     - IDCloudHost:  https://idcloudhost.com
+     - Cheaper, no special requirements
+
+  c) Free subdomain (for testing)
+     - Freenom:      https://www.freenom.com  (.tk, .ml, .ga, .cf)
+     - js.org:       https://js.org (for dev projects)
+
+
+--------------------------------------------------------------------------------
+  STEP 2 — FIND YOUR HACK CLUB NEST SERVER IP
+--------------------------------------------------------------------------------
+
+SSH into your Nest server and run:
+
+  curl -s https://ifconfig.me
+  # or
+  hostname -I
+
+Write down the IP address. You will need it for the DNS records.
+
+Also check your Nest username — your default URL is:
+  https://YOUR_USERNAME.hackclub.app
+
+
+--------------------------------------------------------------------------------
+  STEP 3 — SET DNS RECORDS AT YOUR REGISTRAR
+--------------------------------------------------------------------------------
+
+Log in to your domain registrar's control panel and add these DNS records:
+
+  TYPE    NAME              VALUE                   TTL
+  ----    ----              -----                   ---
+  A       @                 <Nest Server IP>         3600
+  A       www               <Nest Server IP>         3600
+  CNAME   www               oskadusi.sch.id          3600   (alternative to A)
+
+  Replace <Nest Server IP> with the IP you found in Step 2.
+  Replace oskadusi.sch.id with your actual domain.
+
+  The "@" means the root domain (oskadusi.sch.id itself).
+  The "www" means www.oskadusi.sch.id.
+
+Wait for DNS propagation: usually 5 minutes to 48 hours.
+
+  Check propagation status:
+    https://dnschecker.org
+    https://www.whatsmydns.net
+
+
+--------------------------------------------------------------------------------
+  STEP 4 — UPDATE NGINX CONFIG ON NEST
+--------------------------------------------------------------------------------
+
+SSH into your Nest server:
+
+  ssh YOUR_USERNAME@hackclub.app
+
+Edit the nginx config we prepared:
+
+  sudo nano /etc/nginx/sites-available/oskadusi
+
+Find this line:
+
+  server_name YOUR_USERNAME.hackclub.app;
+
+Change it to your custom domain:
+
+  server_name oskadusi.sch.id www.oskadusi.sch.id;
+
+Do this in BOTH server blocks (the HTTP redirect block and the HTTPS block).
+
+Save and exit (Ctrl+X, then Y, then Enter).
+
+
+--------------------------------------------------------------------------------
+  STEP 5 — GET AN SSL CERTIFICATE (HTTPS)
+--------------------------------------------------------------------------------
+
+Hack Club Nest may use Caddy which handles SSL automatically. Check first:
+
+  which caddy && caddy version
+
+  IF CADDY IS AVAILABLE (automatic SSL):
+  ----------------------------------------
+  Create or edit /etc/caddy/Caddyfile:
+
+    sudo nano /etc/caddy/Caddyfile
+
+  Add this block:
+
+    oskadusi.sch.id {
+        reverse_proxy localhost:3001
+    }
+
+    www.oskadusi.sch.id {
+        redir https://oskadusi.sch.id{uri} permanent
+    }
+
+  Reload Caddy:
+
+    sudo systemctl reload caddy
+
+  Caddy will automatically obtain a free Let's Encrypt certificate.
+  Done! No extra SSL steps needed.
+
+
+  IF NGINX IS USED (manual SSL with Certbot):
+  --------------------------------------------
+  Install Certbot if not present:
+
+    sudo apt update
+    sudo apt install certbot python3-certbot-nginx -y
+
+  Get a certificate:
+
+    sudo certbot --nginx -d oskadusi.sch.id -d www.oskadusi.sch.id
+
+  Follow the prompts (enter email, agree to terms, choose redirect option).
+
+  Certbot will automatically edit your nginx config to add SSL.
+
+  Test auto-renewal:
+
+    sudo certbot renew --dry-run
+
+  Enable and check nginx:
+
+    sudo nginx -t
+    sudo systemctl reload nginx
+
+
+--------------------------------------------------------------------------------
+  STEP 6 — UPDATE BACKEND .env
+--------------------------------------------------------------------------------
+
+Update your FRONTEND_URL so CORS allows requests from your new domain:
+
+  nano ~/oskadusi/backend/.env
+
+Change this line:
+
+  FRONTEND_URL=https://YOUR_USERNAME.hackclub.app
+
+To:
+
+  FRONTEND_URL=https://oskadusi.sch.id
+
+Then restart the backend:
+
+  pm2 restart oskadusi
+
+
+--------------------------------------------------------------------------------
+  STEP 7 — UPDATE FRONTEND .env AND REBUILD
+--------------------------------------------------------------------------------
+
+On your LOCAL machine, update the frontend .env before deploying:
+
+  # oskadusi/.env
+  VITE_API_URL=https://oskadusi.sch.id/api
+
+Then rebuild and deploy:
+
+  npm run build
+  # push to server and run:
+  ./deploy/deploy.sh
+
+
+--------------------------------------------------------------------------------
+  STEP 8 — VERIFY EVERYTHING WORKS
+--------------------------------------------------------------------------------
+
+Run these checks:
+
+  1. HTTP redirects to HTTPS:
+     curl -I http://oskadusi.sch.id
+     # Should return: 301 Moved Permanently → https://...
+
+  2. HTTPS loads the site:
+     curl -I https://oskadusi.sch.id
+     # Should return: 200 OK
+
+  3. API is reachable:
+     curl https://oskadusi.sch.id/api/health
+     # Should return: {"success":true,"message":"OSKADUSI API is running",...}
+
+  4. SSL certificate is valid:
+     curl -v https://oskadusi.sch.id 2>&1 | grep "SSL certificate verify"
+     # Should say: SSL certificate verify ok.
+
+  5. Open in browser and check the padlock icon in the address bar.
+
+
+--------------------------------------------------------------------------------
+  TROUBLESHOOTING
+--------------------------------------------------------------------------------
+
+  Problem: Domain still shows old site or "This site can't be reached"
+  Fix:     DNS hasn't propagated yet. Wait up to 48 hours.
+           Check: https://dnschecker.org/#A/oskadusi.sch.id
+
+  Problem: nginx 502 Bad Gateway
+  Fix:     Your Node.js app isn't running.
+           Run: pm2 list
+           If not running: pm2 start ecosystem.config.js
+           Check logs: pm2 logs oskadusi
+
+  Problem: SSL certificate error in browser
+  Fix:     Certificate not yet issued or nginx config incorrect.
+           Run: sudo certbot --nginx -d oskadusi.sch.id
+           Or check Caddy: sudo systemctl status caddy
+
+  Problem: CORS error in browser console
+  Fix:     FRONTEND_URL in backend/.env doesn't match your domain.
+           Update it and restart: pm2 restart oskadusi
+
+  Problem: www.oskadusi.sch.id doesn't work
+  Fix:     Make sure your DNS has an A record for "www" too.
+           And nginx/Caddy config includes www.oskadusi.sch.id.
+
+
+--------------------------------------------------------------------------------
+  QUICK REFERENCE — COMMANDS ON NEST SERVER
+--------------------------------------------------------------------------------
+
+  Check nginx config:          sudo nginx -t
+  Reload nginx:                sudo systemctl reload nginx
+  Check Caddy status:          sudo systemctl status caddy
+  Reload Caddy:                sudo systemctl reload caddy
+  View SSL cert info:          sudo certbot certificates
+  Renew SSL cert:              sudo certbot renew
+  Check app status:            pm2 list
+  Restart app:                 pm2 restart oskadusi
+  View app logs:               pm2 logs oskadusi
+  Check what's on port 3001:   lsof -i :3001
+
+
+--------------------------------------------------------------------------------
+  USEFUL LINKS
+--------------------------------------------------------------------------------
+
+  Hack Club Nest docs:         https://hackclub.com/nest/
+  Hack Club Slack #nest:       https://hackclub.com/slack/
+  Certbot docs:                https://certbot.eff.org/docs/
+  Caddy docs:                  https://caddyserver.com/docs/
+  DNS Checker:                 https://dnschecker.org
+  Niagahoster (domain):        https://www.niagahoster.co.id
+  sch.id registration:         https://register.sch.id
+
+
+================================================================================
+  OSKADUSI — Inspire. Empower. Transform.
+================================================================================

@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { aboutConfig } from '../config';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { aboutConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,8 +16,6 @@ export function About() {
   const authorTextRef = useRef<HTMLDivElement>(null);
   const triggersRef = useRef<ScrollTrigger[]>([]);
 
-  if (!aboutConfig.titleLine1) return null;
-
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -25,38 +23,38 @@ export function About() {
     // Entry animations
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
         // Image 1 clip reveal
         tl.fromTo(
           image1Ref.current,
-          { clipPath: 'inset(100% 0 0 0)', scale: 1.1 },
+          { clipPath: "inset(100% 0 0 0)", scale: 1.1 },
           {
-            clipPath: 'inset(0% 0 0 0)',
+            clipPath: "inset(0% 0 0 0)",
             scale: 1,
             duration: 1.2,
-            ease: 'expo.out',
-          }
+            ease: "expo.out",
+          },
         );
 
         // Image 2 clip reveal
         tl.fromTo(
           image2Ref.current,
-          { clipPath: 'inset(0 100% 0 0)', scale: 1.05 },
+          { clipPath: "inset(0 100% 0 0)", scale: 1.05 },
           {
-            clipPath: 'inset(0 0% 0 0)',
+            clipPath: "inset(0 0% 0 0)",
             scale: 1,
             duration: 1.1,
-            ease: 'expo.out',
+            ease: "expo.out",
           },
-          '-=0.9'
+          "-=0.9",
         );
 
         // Title lines reveal
         if (titleRef.current) {
-          const lines = titleRef.current.querySelectorAll('.title-line');
+          const lines = titleRef.current.querySelectorAll(".title-line");
           tl.fromTo(
             lines,
             { y: 40, opacity: 0 },
@@ -65,9 +63,9 @@ export function About() {
               opacity: 1,
               duration: 0.8,
               stagger: 0.2,
-              ease: 'back.out(1.7)',
+              ease: "back.out(1.7)",
             },
-            '-=0.8'
+            "-=0.8",
           );
         }
 
@@ -75,16 +73,16 @@ export function About() {
         tl.fromTo(
           textRef.current,
           { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' },
-          '-=0.4'
+          { y: 0, opacity: 1, duration: 0.7, ease: "power2.out" },
+          "-=0.4",
         );
 
         // Red accent line
         tl.fromTo(
           lineRef.current,
           { width: 0 },
-          { width: '120%', duration: 1, ease: 'expo.inOut' },
-          '-=0.6'
+          { width: "120%", duration: 1, ease: "expo.inOut" },
+          "-=0.6",
         );
 
         // Author image
@@ -96,14 +94,14 @@ export function About() {
             rotate: 0,
             opacity: 1,
             duration: 0.9,
-            ease: 'elastic.out(1, 0.5)',
+            ease: "elastic.out(1, 0.5)",
           },
-          '-=0.7'
+          "-=0.7",
         );
 
         // Author text words
         if (authorTextRef.current) {
-          const words = authorTextRef.current.querySelectorAll('.word');
+          const words = authorTextRef.current.querySelectorAll(".word");
           tl.fromTo(
             words,
             { y: 15, opacity: 0 },
@@ -112,9 +110,9 @@ export function About() {
               opacity: 1,
               duration: 0.6,
               stagger: 0.05,
-              ease: 'power2.out',
+              ease: "power2.out",
             },
-            '-=0.5'
+            "-=0.5",
           );
         }
       },
@@ -125,8 +123,8 @@ export function About() {
     // Parallax on scroll
     const parallaxTrigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top bottom',
-      end: 'bottom top',
+      start: "top bottom",
+      end: "bottom top",
       scrub: 1,
       onUpdate: (self) => {
         if (image1Ref.current) {
@@ -154,17 +152,19 @@ export function About() {
     };
   }, []);
 
-  const authorTextChars = aboutConfig.authorBio.split('');
+  if (!aboutConfig.titleLine1) return null;
+
+  const authorTextChars = aboutConfig.authorBio.split("");
 
   return (
     <section
       ref={sectionRef}
       id="about"
       className="relative py-32 px-8 lg:px-16 overflow-hidden"
-      style={{ transform: 'rotate(0deg)' }}
+      style={{ transform: "rotate(0deg)" }}
     >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-black z-0" />
+      {/* Background */}
+      <div className="absolute inset-0 bg-[#050505] z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Section layout */}
@@ -175,7 +175,7 @@ export function About() {
             <div
               ref={image1Ref}
               className="relative w-full aspect-[2/3] overflow-hidden group cursor-pointer"
-              style={{ willChange: 'clip-path, transform' }}
+              style={{ willChange: "clip-path, transform" }}
             >
               <img
                 src={aboutConfig.image1}
@@ -189,7 +189,7 @@ export function About() {
             <div
               ref={image2Ref}
               className="relative w-3/4 aspect-[2/3] -mt-32 ml-auto mr-4 overflow-hidden group cursor-pointer z-10"
-              style={{ willChange: 'clip-path, transform' }}
+              style={{ willChange: "clip-path, transform" }}
             >
               <img
                 src={aboutConfig.image2}
@@ -202,24 +202,22 @@ export function About() {
 
           {/* Right column - Content */}
           <div className="lg:col-span-7 flex flex-col justify-center">
+            <div className="section-tag mb-8">About Us</div>
+
             {/* Section title */}
             <h2
               ref={titleRef}
               className="text-h3 lg:text-h2 text-white font-normal leading-tight mb-8"
             >
-              <span className="title-line block">
-                {aboutConfig.titleLine1}
-              </span>
-              <span className="title-line block">
-                {aboutConfig.titleLine2}
-              </span>
+              <span className="title-line block">{aboutConfig.titleLine1}</span>
+              <span className="title-line block">{aboutConfig.titleLine2}</span>
             </h2>
 
             {/* Red accent line */}
             <div
               ref={lineRef}
-              className="h-[2px] bg-highlight mb-8 animate-pulse-glow"
-              style={{ willChange: 'width' }}
+              className="h-px bg-highlight mb-8 animate-pulse-glow"
+              style={{ willChange: "width" }}
             />
 
             {/* About text */}
@@ -236,7 +234,7 @@ export function About() {
               <div
                 ref={authorImageRef}
                 className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-full border-2 border-highlight/30"
-                style={{ willChange: 'transform, opacity' }}
+                style={{ willChange: "transform, opacity" }}
               >
                 <img
                   src={aboutConfig.authorImage}
@@ -246,7 +244,10 @@ export function About() {
               </div>
 
               {/* Author text */}
-              <div ref={authorTextRef} className="text-body text-white/60">
+              <div
+                ref={authorTextRef}
+                className="text-body text-white/60 italic"
+              >
                 {authorTextChars.map((char, i) => (
                   <span key={i} className="word inline">
                     {char}

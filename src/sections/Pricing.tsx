@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Check } from 'lucide-react';
-import { pricingConfig } from '../config';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Check } from "lucide-react";
+import { pricingConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -14,8 +14,6 @@ export function Pricing() {
   const [animatedPrices, setAnimatedPrices] = useState<number[]>([]);
   const triggersRef = useRef<ScrollTrigger[]>([]);
 
-  if (!pricingConfig.title || pricingConfig.plans.length === 0) return null;
-
   const plans = pricingConfig.plans;
 
   useEffect(() => {
@@ -26,7 +24,7 @@ export function Pricing() {
 
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
@@ -34,15 +32,15 @@ export function Pricing() {
         tl.fromTo(
           titleRef.current,
           { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: 'expo.out' }
+          { y: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
         );
 
         // Subtitle
         tl.fromTo(
           subtitleRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
-          '-=0.4'
+          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+          "-=0.4",
         );
 
         // Cards 3D rotation entry
@@ -69,26 +67,26 @@ export function Pricing() {
                 scale: 1,
                 opacity: 1,
                 duration: i === 1 ? 1.1 : 1,
-                ease: i === 1 ? 'back.out(1.7)' : 'expo.out',
+                ease: i === 1 ? "back.out(1.7)" : "expo.out",
               },
-              i === 1 ? '-=0.7' : `-=${0.8 - i * 0.1}`
+              i === 1 ? "-=0.7" : `-=${0.8 - i * 0.1}`,
             );
 
             // Red accent line for featured
             if (plans[i].featured) {
-              const accentLine = card.querySelector('.accent-line');
+              const accentLine = card.querySelector(".accent-line");
               if (accentLine) {
                 tl.fromTo(
                   accentLine,
                   { width: 0 },
-                  { width: '100%', duration: 0.8, ease: 'expo.inOut' },
-                  '-=0.5'
+                  { width: "100%", duration: 0.8, ease: "expo.inOut" },
+                  "-=0.5",
                 );
               }
             }
 
             // Features stagger
-            const features = card.querySelectorAll('.feature-item');
+            const features = card.querySelectorAll(".feature-item");
             tl.fromTo(
               features,
               { x: -10, opacity: 0 },
@@ -97,9 +95,9 @@ export function Pricing() {
                 opacity: 1,
                 duration: 0.4,
                 stagger: 0.05,
-                ease: 'power2.out',
+                ease: "power2.out",
               },
-              '-=0.6'
+              "-=0.6",
             );
           }
         });
@@ -111,7 +109,7 @@ export function Pricing() {
             value: plan.price,
             duration: 1.2,
             delay: 0.5,
-            ease: 'power2.out',
+            ease: "power2.out",
             onUpdate: () => {
               setAnimatedPrices((prev) => {
                 const newPrices = [...prev];
@@ -141,21 +139,23 @@ export function Pricing() {
         y: -10,
         z: 30,
         rotateY: 0,
-        boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
+        boxShadow: "0 30px 60px rgba(0,0,0,0.4)",
         duration: 0.4,
-        ease: 'expo.out',
+        ease: "expo.out",
       });
     } else {
       gsap.to(card, {
         y: 0,
         z: 0,
         rotateY: 0,
-        boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+        boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
         duration: 0.4,
-        ease: 'power2.out',
+        ease: "power2.out",
       });
     }
   };
+
+  if (!pricingConfig.title || pricingConfig.plans.length === 0) return null;
 
   return (
     <section
@@ -166,6 +166,7 @@ export function Pricing() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
+          <div className="section-tag justify-center mb-6">Upcoming Events</div>
           <h2
             ref={titleRef}
             className="text-h1 lg:text-display-xl text-white font-medium mb-4"
@@ -187,12 +188,12 @@ export function Pricing() {
               }}
               className={`relative p-8 lg:p-10 preserve-3d transition-colors duration-300 ${
                 plan.featured
-                  ? 'bg-white text-black'
-                  : 'bg-dark-gray text-white hover:bg-dark-gray/80'
+                  ? "bg-[#0f0000] border border-highlight/50 text-white"
+                  : "bg-dark-gray text-white hover:bg-dark-gray/80"
               }`}
               style={{
-                transformStyle: 'preserve-3d',
-                willChange: 'transform, box-shadow',
+                transformStyle: "preserve-3d",
+                willChange: "transform, box-shadow",
               }}
               onMouseEnter={() => handleCardHover(index, true)}
               onMouseLeave={() => handleCardHover(index, false)}
@@ -201,14 +202,14 @@ export function Pricing() {
               {plan.featured && (
                 <div
                   className="accent-line absolute top-0 left-0 h-1 bg-highlight"
-                  style={{ willChange: 'width' }}
+                  style={{ willChange: "width" }}
                 />
               )}
 
               {/* Plan name */}
               <h3
                 className={`text-h5 mb-6 ${
-                  plan.featured ? 'text-black' : 'text-white/80'
+                  plan.featured ? "text-white" : "text-white/80"
                 }`}
               >
                 {plan.name}
@@ -217,15 +218,15 @@ export function Pricing() {
               {/* Price */}
               <div className="mb-8">
                 <span className="text-h4 lg:text-h3 font-medium tabular-nums">
-                  ${(animatedPrices[index] || 0).toLocaleString()}.00
+                  {plans[index].price === 0
+                    ? "Gratis"
+                    : `Rp ${(animatedPrices[index] || 0).toLocaleString("id-ID")}`}
                 </span>
-                <span
-                  className={`text-body ml-2 ${
-                    plan.featured ? 'text-black/60' : 'text-white/60'
-                  }`}
-                >
-                  / {plan.unit}
-                </span>
+                {plans[index].price !== 0 && (
+                  <span className="text-body ml-2 text-white/60">
+                    / {plan.unit}
+                  </span>
+                )}
               </div>
 
               {/* Features */}
@@ -233,13 +234,11 @@ export function Pricing() {
                 {plan.features.map((feature, i) => (
                   <li
                     key={i}
-                    className={`feature-item flex items-center gap-3 text-body ${
-                      plan.featured ? 'text-black/70' : 'text-white/70'
-                    }`}
+                    className="feature-item flex items-center gap-3 text-body text-white/70"
                   >
                     <Check
                       className={`w-5 h-5 flex-shrink-0 ${
-                        plan.featured ? 'text-highlight' : 'text-highlight'
+                        plan.featured ? "text-highlight" : "text-highlight"
                       }`}
                     />
                     {feature}
@@ -251,8 +250,8 @@ export function Pricing() {
               <button
                 className={`w-full py-4 text-body font-medium transition-all duration-200 ${
                   plan.featured
-                    ? 'bg-black text-white hover:bg-highlight'
-                    : 'border border-white/30 text-white hover:bg-white hover:text-black'
+                    ? "bg-highlight text-white hover:bg-[#b30000]"
+                    : "border border-white/30 text-white hover:bg-white hover:text-black"
                 }`}
               >
                 {pricingConfig.ctaButtonText}

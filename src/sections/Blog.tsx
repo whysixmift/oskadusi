@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowUpRight, Clock, Calendar } from 'lucide-react';
-import { blogConfig } from '../config';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowUpRight, Clock, Calendar } from "lucide-react";
+import { blogConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,10 +11,8 @@ export function Blog() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const descRef = useRef<HTMLParagraphElement>(null);
   const postsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLAnchorElement>(null);
   const triggersRef = useRef<ScrollTrigger[]>([]);
-
-  if (!blogConfig.title || blogConfig.posts.length === 0) return null;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -22,17 +20,17 @@ export function Blog() {
 
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
         // Title typewriter effect
         if (titleRef.current) {
-          const text = titleRef.current.textContent || '';
-          titleRef.current.textContent = '';
-          titleRef.current.style.opacity = '1';
+          const text = titleRef.current.textContent || "";
+          titleRef.current.textContent = "";
+          titleRef.current.style.opacity = "1";
 
-          text.split('').forEach((char, i) => {
+          text.split("").forEach((char, i) => {
             setTimeout(() => {
               if (titleRef.current) {
                 titleRef.current.textContent += char;
@@ -45,34 +43,34 @@ export function Blog() {
         tl.fromTo(
           descRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-          0.8
+          { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+          0.8,
         );
 
         // Posts clip reveal
         postsRef.current.forEach((post, i) => {
           if (post) {
-            const image = post.querySelector('.post-image');
-            const content = post.querySelector('.post-content');
+            const image = post.querySelector(".post-image");
+            const content = post.querySelector(".post-content");
 
             tl.fromTo(
               image,
               {
-                clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)',
+                clipPath: "polygon(0 0, 0 0, 0 100%, 0 100%)",
               },
               {
-                clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+                clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
                 duration: 1,
-                ease: 'expo.out',
+                ease: "expo.out",
               },
-              1 + i * 0.2
+              1 + i * 0.2,
             );
 
             tl.fromTo(
               content,
               { y: 30, opacity: 0 },
-              { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-              `-=0.6`
+              { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+              `-=0.6`,
             );
           }
         });
@@ -81,8 +79,8 @@ export function Blog() {
         tl.fromTo(
           buttonRef.current,
           { x: 50, opacity: 0 },
-          { x: 0, opacity: 1, duration: 0.5, ease: 'back.out(1.7)' },
-          '-=0.3'
+          { x: 0, opacity: 1, duration: 0.5, ease: "back.out(1.7)" },
+          "-=0.3",
         );
       },
       once: true,
@@ -95,6 +93,8 @@ export function Blog() {
     };
   }, []);
 
+  if (!blogConfig.title || blogConfig.posts.length === 0) return null;
+
   return (
     <section
       ref={sectionRef}
@@ -105,27 +105,28 @@ export function Blog() {
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-16">
           <div>
+            <p className="text-body-sm text-white/20 font-mono mb-4 tracking-widest">
+              08
+            </p>
             <h2
               ref={titleRef}
               className="text-h1 lg:text-display-xl text-white font-medium mb-4 opacity-0"
             >
               {blogConfig.title}
             </h2>
-            <p
-              ref={descRef}
-              className="text-body-lg text-white/60 max-w-xl"
-            >
+            <p ref={descRef} className="text-body-lg text-white/60 max-w-xl">
               {blogConfig.subtitle}
             </p>
           </div>
 
-          <button
+          <a
             ref={buttonRef}
+            href="/blog"
             className="hidden lg:flex items-center gap-2 text-body text-white/60 hover:text-white transition-colors duration-300 mt-8 lg:mt-0 group"
           >
             {blogConfig.allPostsLabel}
             <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
-          </button>
+          </a>
         </div>
 
         {/* Blog posts grid */}
@@ -147,7 +148,7 @@ export function Blog() {
                 />
 
                 {/* Category tag */}
-                <div className="absolute top-4 left-4 px-4 py-2 bg-black/80 backdrop-blur-sm">
+                <div className="absolute top-4 left-4 px-4 py-2 bg-highlight/80 backdrop-blur-sm">
                   <span className="text-body-sm text-white">
                     {post.category}
                   </span>
@@ -163,7 +164,8 @@ export function Blog() {
                 <div className="flex items-center gap-6 mb-4 text-body-sm text-white/50">
                   <span className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    {blogConfig.readTimePrefix}{post.readTime}
+                    {blogConfig.readTimePrefix}
+                    {post.readTime}
                   </span>
                   <span className="flex items-center gap-2">
                     <Calendar className="w-4 h-4" />

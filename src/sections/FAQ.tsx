@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Plus } from 'lucide-react';
-import { faqConfig } from '../config';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Plus } from "lucide-react";
+import { faqConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,7 +21,7 @@ export function FAQ() {
 
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
@@ -29,7 +29,7 @@ export function FAQ() {
         tl.fromTo(
           titleRef.current,
           { scale: 0.9, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.7, ease: 'expo.out' }
+          { scale: 1, opacity: 1, duration: 0.7, ease: "expo.out" },
         );
 
         // FAQ items stagger from alternating sides
@@ -39,8 +39,8 @@ export function FAQ() {
             tl.fromTo(
               item,
               { x: fromX, opacity: 0 },
-              { x: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-              `-=0.5`
+              { x: 0, opacity: 1, duration: 0.6, ease: "power2.out" },
+              `-=0.5`,
             );
           }
         });
@@ -66,7 +66,13 @@ export function FAQ() {
       className="relative py-32 px-8 lg:px-16 bg-black overflow-hidden"
     >
       <div className="max-w-4xl mx-auto">
+        {/* Section label */}
+        <p className="text-body-sm text-white/20 font-mono mb-4 tracking-widest text-center">
+          05
+        </p>
+
         {/* Section title */}
+        <div className="section-tag text-center justify-center mb-8">FAQ</div>
         <h2
           ref={titleRef}
           className="text-h1 lg:text-display-xl text-white font-medium text-center mb-20"
@@ -83,25 +89,27 @@ export function FAQ() {
                 itemsRef.current[index] = el;
               }}
               className={`relative ${
-                index % 2 === 0 ? 'lg:-translate-x-8' : 'lg:translate-x-8'
+                index % 2 === 0 ? "lg:-translate-x-8" : "lg:translate-x-8"
               }`}
             >
               {/* Question */}
               <button
                 className={`w-full py-6 lg:py-8 flex items-center justify-between text-left border-b transition-all duration-300 ${
                   openIndex === index
-                    ? 'border-white'
-                    : 'border-white/20 hover:border-white/40'
+                    ? "border-white"
+                    : "border-white/20 hover:border-white/40"
                 } ${
                   openIndex !== null && openIndex !== index
-                    ? 'opacity-50'
-                    : 'opacity-100'
+                    ? "opacity-30"
+                    : "opacity-100"
                 }`}
                 onClick={() => toggleItem(index)}
               >
                 <h3
-                  className={`text-h5 lg:text-h4 text-white pr-8 transition-all duration-200 ${
-                    openIndex === index ? 'font-medium' : 'font-normal'
+                  className={`text-h5 lg:text-h4 pr-8 transition-all duration-200 ${
+                    openIndex === index
+                      ? "font-medium text-highlight"
+                      : "font-normal text-white"
                   }`}
                 >
                   {faq.question}
@@ -111,8 +119,8 @@ export function FAQ() {
                 <div
                   className={`flex-shrink-0 w-10 h-10 rounded-full border border-white/30 flex items-center justify-center transition-all duration-400 ${
                     openIndex === index
-                      ? 'bg-highlight border-highlight rotate-45 scale-120'
-                      : 'hover:border-white'
+                      ? "bg-highlight border-highlight rotate-45 scale-120"
+                      : "hover:border-white"
                   }`}
                 >
                   <Plus className="w-5 h-5 text-white" />
@@ -123,8 +131,8 @@ export function FAQ() {
               <div
                 className={`overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                   openIndex === index
-                    ? 'max-h-[500px] opacity-100'
-                    : 'max-h-0 opacity-0'
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
                 }`}
               >
                 <div className="py-6 lg:py-8">

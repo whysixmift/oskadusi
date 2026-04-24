@@ -1,80 +1,106 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 export function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const positionRef = useRef({ x: 0, y: 0 });
+  const pos = useRef({ x: -100, y: -100 });
+  const ringPos = useRef({ x: -100, y: -100 });
   const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    // Check if touch device
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      return;
-    }
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     setIsVisible(true);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      positionRef.current = { x: e.clientX, y: e.clientY };
-      
-      if (cursorRef.current) {
-        cursorRef.current.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+    const moveDot = (e: MouseEvent) => {
+      pos.current = { x: e.clientX, y: e.clientY };
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${e.clientX - 4}px, ${e.clientY - 4}px)`;
       }
     };
 
-    const handleMouseEnter = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    const animateRing = () => {
+      ringPos.current.x += (pos.current.x - ringPos.current.x) * 0.12;
+      ringPos.current.y += (pos.current.y - ringPos.current.y) * 0.12;
+      if (ringRef.current) {
+        const size = isHovering ? 40 : 28;
+        ringRef.current.style.transform = `translate(${ringPos.current.x - size / 2}px, ${ringPos.current.y - size / 2}px)`;
+      }
+      rafRef.current = requestAnimationFrame(animateRing);
+    };
+
+    rafRef.current = requestAnimationFrame(animateRing);
+
+    const onOver = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
       if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('a') ||
-        target.closest('button') ||
-        target.dataset.hover === 'true'
+        t.tagName === "A" ||
+        t.tagName === "BUTTON" ||
+        t.closest("a") ||
+        t.closest("button") ||
+        t.dataset.hover === "true"
       ) {
         setIsHovering(true);
       }
     };
 
-    const handleMouseLeave = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    const onOut = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
       if (
-        target.tagName === 'A' ||
-        target.tagName === 'BUTTON' ||
-        target.closest('a') ||
-        target.closest('button') ||
-        target.dataset.hover === 'true'
+        t.tagName === "A" ||
+        t.tagName === "BUTTON" ||
+        t.closest("a") ||
+        t.closest("button") ||
+        t.dataset.hover === "true"
       ) {
         setIsHovering(false);
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    document.addEventListener('mouseover', handleMouseEnter, { passive: true });
-    document.addEventListener('mouseout', handleMouseLeave, { passive: true });
+    window.addEventListener("mousemove", moveDot, { passive: true });
+    document.addEventListener("mouseover", onOver, { passive: true });
+    document.addEventListener("mouseout", onOut, { passive: true });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseEnter);
-      document.removeEventListener('mouseout', handleMouseLeave);
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-      }
+      window.removeEventListener("mousemove", moveDot);
+      document.removeEventListener("mouseover", onOver);
+      document.removeEventListener("mouseout", onOut);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [isHovering]);
 
   if (!isVisible) return null;
 
   return (
-    <div
-      ref={cursorRef}
-      className={`fixed top-0 left-0 pointer-events-none z-[10000] mix-blend-diffrence transition-[width,height] duration-200 ease-out rounded-full ${
-        isHovering ? 'w-12 h-12' : 'w-8 h-8'
-      }`}
-      style={{
-        background: 'rgba(234, 0, 0, 0.3)',
-        willChange: 'transform',
-      }}
-    />
+    <>
+      {/* Dot — snaps instantly to cursor */}
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 pointer-events-none z-[10001]"
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: "#ea0000",
+          willChange: "transform",
+        }}
+      />
+
+      {/* Ring — follows with slight lag */}
+      <div
+        ref={ringRef}
+        className="fixed top-0 left-0 pointer-events-none z-[10000] transition-[width,height,border-color,opacity] duration-200"
+        style={{
+          width: isHovering ? 40 : 28,
+          height: isHovering ? 40 : 28,
+          borderRadius: "50%",
+          border: `1.5px solid ${isHovering ? "#ea0000" : "rgba(255,255,255,0.7)"}`,
+          background: isHovering ? "rgba(234,0,0,0.08)" : "transparent",
+          willChange: "transform",
+        }}
+      />
+    </>
   );
 }

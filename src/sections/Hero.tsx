@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { heroConfig } from '../config';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { heroConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,10 +13,8 @@ export function Hero() {
   const servicesRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const copyrightRef = useRef<HTMLDivElement>(null);
-  const [, setLoaded] = useState(false);
-  const triggersRef = useRef<ScrollTrigger[]>([]);
 
-  if (!heroConfig.title) return null;
+  const triggersRef = useRef<ScrollTrigger[]>([]);
 
   useEffect(() => {
     // Entry animation on load
@@ -26,12 +24,12 @@ export function Hero() {
     tl.fromTo(
       imageRef.current,
       { scale: 1.1, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 1.8, ease: 'expo.out' }
+      { scale: 1, opacity: 1, duration: 1.8, ease: "expo.out" },
     );
 
     // Title characters animation
     if (titleRef.current) {
-      const chars = titleRef.current.querySelectorAll('.char');
+      const chars = titleRef.current.querySelectorAll(".char");
       tl.fromTo(
         chars,
         { rotateY: -90, y: 60, opacity: 0 },
@@ -41,51 +39,49 @@ export function Hero() {
           opacity: 1,
           duration: 0.9,
           stagger: 0.1,
-          ease: 'back.out(1.7)',
+          ease: "back.out(1.7)",
         },
-        '-=1.4'
+        "-=1.4",
       );
     }
 
     // Subtitle blur reveal
     tl.fromTo(
       subtitleRef.current,
-      { filter: 'blur(20px)', opacity: 0 },
-      { filter: 'blur(0px)', opacity: 1, duration: 0.8, ease: 'power2.out' },
-      '-=0.6'
+      { filter: "blur(20px)", opacity: 0 },
+      { filter: "blur(0px)", opacity: 1, duration: 0.8, ease: "power2.out" },
+      "-=0.6",
     );
 
     // Services slide in
     tl.fromTo(
       servicesRef.current,
       { x: -50, opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.7, ease: 'expo.out' },
-      '-=0.4'
+      { x: 0, opacity: 1, duration: 0.7, ease: "expo.out" },
+      "-=0.4",
     );
 
     // Line grow
     tl.fromTo(
       lineRef.current,
       { height: 0 },
-      { height: 200, duration: 1.5, ease: 'expo.inOut' },
-      '-=0.8'
+      { height: 200, duration: 1.5, ease: "expo.inOut" },
+      "-=0.8",
     );
 
     // Copyright fade
     tl.fromTo(
       copyrightRef.current,
       { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
-      '-=1'
+      { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+      "-=1",
     );
-
-    setLoaded(true);
 
     // Scroll effects
     const trigger1 = ScrollTrigger.create({
       trigger: sectionRef.current,
-      start: 'top top',
-      end: '50% top',
+      start: "top top",
+      end: "50% top",
       scrub: 1,
       onUpdate: (self) => {
         if (imageRef.current) {
@@ -100,8 +96,8 @@ export function Hero() {
 
     const trigger2 = ScrollTrigger.create({
       trigger: sectionRef.current,
-      start: 'top top',
-      end: '30% top',
+      start: "top top",
+      end: "30% top",
       scrub: 1,
       onUpdate: (self) => {
         if (titleRef.current) {
@@ -116,8 +112,8 @@ export function Hero() {
 
     const trigger3 = ScrollTrigger.create({
       trigger: sectionRef.current,
-      start: '10% top',
-      end: '40% top',
+      start: "10% top",
+      end: "40% top",
       scrub: 1,
       onUpdate: (self) => {
         if (subtitleRef.current) {
@@ -137,19 +133,21 @@ export function Hero() {
     };
   }, []);
 
+  if (!heroConfig.title) return null;
+
   return (
     <section
       ref={sectionRef}
       id="hero"
       className="relative h-screen w-full overflow-hidden perspective-container z-10"
-      style={{ perspective: '1200px' }}
+      style={{ perspective: "1200px" }}
     >
       {/* Vignette overlay */}
       <div
         className="absolute inset-0 z-10 pointer-events-none"
         style={{
           background:
-            'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)',
+            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)",
         }}
       />
 
@@ -158,24 +156,24 @@ export function Hero() {
         ref={imageRef}
         className="absolute inset-0 z-0"
         style={{
-          willChange: 'transform, opacity',
+          willChange: "transform, opacity",
         }}
       >
         <img
           src={heroConfig.backgroundImage}
           alt="Hero"
           className="w-full h-full object-cover"
-          style={{ filter: 'brightness(0.9)' }}
+          style={{ filter: "brightness(0.9)" }}
         />
         {/* Chromatic aberration effect layers */}
         <div
           className="absolute inset-0 mix-blend-multiply opacity-50"
           style={{
             backgroundImage: `url(${heroConfig.backgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            transform: 'translateX(-2px)',
-            filter: 'url(#red-channel)',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            transform: "translateX(-2px)",
+            filter: "url(#red-channel)",
           }}
         />
       </div>
@@ -183,7 +181,7 @@ export function Hero() {
       {/* Content container */}
       <div
         className="relative z-20 h-full w-full flex flex-col justify-center items-center px-8"
-        style={{ transformStyle: 'preserve-3d' }}
+        style={{ transformStyle: "preserve-3d" }}
       >
         {/* Main title */}
         <img
@@ -191,18 +189,21 @@ export function Hero() {
           alt="title"
           className="max-w-[700px] md:max-w-[1000px] mx-auto block"
           style={{
-            filter: 'drop-shadow(0 0 80px rgba(234, 0, 0, 0.3))',
-            width: '250px',
-            marginBottom: '5rem',
-            willChange: 'transform',
+            filter: "drop-shadow(0 0 60px rgba(255,255,255,0.1))",
+            width: "250px",
+            marginBottom: "2.5rem",
+            willChange: "transform",
           }}
         />
+
+        {/* Horizontal separator */}
+        <div className="premium-divider w-48 mb-8 opacity-60" />
 
         {/* Subtitle */}
         <p
           ref={subtitleRef}
-          className="text-h3 font-extralight text-white/80 tracking-widest"
-          style={{ willChange: 'filter, opacity' }}
+          className="text-body-lg text-white/60 tracking-[0.5em] uppercase"
+          style={{ willChange: "filter, opacity", fontWeight: 200 }}
         >
           {heroConfig.subtitle}
         </p>
@@ -211,9 +212,12 @@ export function Hero() {
       {/* Copyright - bottom right */}
       <div
         ref={copyrightRef}
-        className="absolute right-8 bottom-8 z-30"
+        className="absolute right-8 bottom-8 z-30 flex items-center gap-3"
       >
-        <span className="text-body-sm text-white/40">{heroConfig.copyright}</span>
+        <span className="w-px h-8 bg-white/20 inline-block" />
+        <span className="text-body-sm text-white/25 tracking-widest uppercase">
+          {heroConfig.copyright}
+        </span>
       </div>
 
       {/* SVG filters for chromatic aberration */}

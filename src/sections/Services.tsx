@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { servicesConfig } from '../config';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { servicesConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,7 +15,8 @@ export function Services() {
   const mousePos = useRef({ x: 0, y: 0 });
   const triggersRef = useRef<ScrollTrigger[]>([]);
 
-  if (!servicesConfig.title || servicesConfig.services.length === 0) return null;
+  if (!servicesConfig.title || servicesConfig.services.length === 0)
+    return null;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -24,49 +25,54 @@ export function Services() {
     // Entry animation
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 80%',
+      start: "top 80%",
       onEnter: () => {
         const tl = gsap.timeline();
 
         // Title slide in
         tl.fromTo(
           titleRef.current,
-          { y: 60, opacity: 0, letterSpacing: '20px' },
+          { y: 60, opacity: 0, letterSpacing: "20px" },
           {
             y: 0,
             opacity: 1,
-            letterSpacing: '0px',
+            letterSpacing: "0px",
             duration: 0.8,
-            ease: 'expo.out',
-          }
+            ease: "expo.out",
+          },
         );
 
         // Subtitle blur
         tl.fromTo(
           subtitleRef.current,
-          { filter: 'blur(15px)', opacity: 0 },
-          { filter: 'blur(0)', opacity: 1, duration: 0.6, ease: 'power2.out' },
-          '-=0.4'
+          { filter: "blur(15px)", opacity: 0 },
+          { filter: "blur(0)", opacity: 1, duration: 0.6, ease: "power2.out" },
+          "-=0.4",
         );
 
         // Service items stagger
         itemsRef.current.forEach((item, i) => {
           if (item) {
-            const line = item.querySelector('.service-line');
-            const number = item.querySelector('.service-number');
+            const line = item.querySelector(".service-line");
+            const number = item.querySelector(".service-number");
 
             tl.fromTo(
               line,
               { width: 0 },
-              { width: '100%', duration: 1, ease: 'expo.inOut' },
-              `-=${0.8 - i * 0.2}`
+              { width: "100%", duration: 1, ease: "expo.inOut" },
+              `-=${0.8 - i * 0.2}`,
             );
 
             tl.fromTo(
               number,
               { scale: 0.5, opacity: 0 },
-              { scale: 1, opacity: 1, duration: 0.8, ease: 'elastic.out(1, 0.5)' },
-              `-=0.7`
+              {
+                scale: 1,
+                opacity: 1,
+                duration: 0.8,
+                ease: "elastic.out(1, 0.5)",
+              },
+              `-=0.7`,
             );
           }
         });
@@ -94,7 +100,7 @@ export function Services() {
       x: x - 150,
       y: y - 200,
       duration: 0.15,
-      ease: 'power2.out',
+      ease: "power2.out",
     });
   };
 
@@ -105,7 +111,7 @@ export function Services() {
         opacity: 1,
         scale: 1,
         duration: 0.6,
-        ease: 'expo.out',
+        ease: "expo.out",
       });
     }
   };
@@ -117,7 +123,7 @@ export function Services() {
         opacity: 0,
         scale: 0.9,
         duration: 0.4,
-        ease: 'power2.out',
+        ease: "power2.out",
       });
     }
   };
@@ -134,9 +140,9 @@ export function Services() {
       {/* Floating image preview */}
       <div
         ref={imageRef}
-        className="fixed pointer-events-none z-50 w-[300px] h-[400px] opacity-0"
+        className="fixed pointer-events-none z-50 w-[300px] h-[400px] opacity-0 border border-white/10"
         style={{
-          willChange: 'transform, opacity',
+          willChange: "transform, opacity",
         }}
       >
         {activeIndex !== null && (
@@ -151,16 +157,17 @@ export function Services() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-20">
+          <p className="text-body-sm text-white/20 font-mono mb-4 tracking-widest">
+            03
+          </p>
+          <div className="section-tag mb-6">Structure</div>
           <h2
             ref={titleRef}
             className="text-h1 lg:text-display-xl text-white font-medium mb-6"
           >
             {servicesConfig.title}
           </h2>
-          <p
-            ref={subtitleRef}
-            className="text-body-lg text-white/60 max-w-2xl"
-          >
+          <p ref={subtitleRef} className="text-body-lg text-white/60 max-w-2xl">
             {servicesConfig.subtitle}
           </p>
         </div>
@@ -180,7 +187,7 @@ export function Services() {
               {/* Top border line */}
               <div
                 className="service-line h-px bg-white/20 group-hover:bg-highlight transition-colors duration-300"
-                style={{ willChange: 'width' }}
+                style={{ willChange: "width" }}
               />
 
               {/* Content */}
@@ -189,7 +196,7 @@ export function Services() {
                   {/* Number */}
                   <span
                     className="service-number text-h5 lg:text-h4 text-white/30 font-light group-hover:text-highlight group-hover:scale-110 transition-all duration-300"
-                    style={{ willChange: 'transform, color' }}
+                    style={{ willChange: "transform, color" }}
                   >
                     [{service.id}]
                   </span>
@@ -198,18 +205,14 @@ export function Services() {
                   <h3
                     className={`text-h3 lg:text-h2 text-white font-normal transition-all duration-400 ${
                       activeIndex !== null && activeIndex !== index
-                        ? 'opacity-30'
-                        : 'opacity-100'
-                    } ${
-                      activeIndex === index
-                        ? 'text-shadow-glow'
-                        : ''
-                    }`}
+                        ? "opacity-30"
+                        : "opacity-100"
+                    } ${activeIndex === index ? "text-shadow-glow" : ""}`}
                     style={{
                       textShadow:
                         activeIndex === index
-                          ? '0 0 30px rgba(255,255,255,0.3)'
-                          : 'none',
+                          ? "0 0 30px rgba(255,255,255,0.3)"
+                          : "none",
                     }}
                   >
                     {service.title}
@@ -220,8 +223,8 @@ export function Services() {
                 <p
                   className={`hidden lg:block text-body text-white/40 max-w-xs text-right transition-opacity duration-300 ${
                     activeIndex !== null && activeIndex !== index
-                      ? 'opacity-30'
-                      : 'opacity-100'
+                      ? "opacity-30"
+                      : "opacity-100"
                   }`}
                 >
                   {service.description}

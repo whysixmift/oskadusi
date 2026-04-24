@@ -1,8 +1,15 @@
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Instagram, Dribbble, ArrowUpRight, Music, Youtube, Mail } from 'lucide-react';
-import { footerConfig } from '../config';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  Instagram,
+  Dribbble,
+  ArrowUpRight,
+  Music,
+  Youtube,
+  Mail,
+} from "lucide-react";
+import { footerConfig } from "../config";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,15 +30,13 @@ export function Footer() {
   const borderRef = useRef<HTMLDivElement>(null);
   const triggersRef = useRef<ScrollTrigger[]>([]);
 
-  if (!footerConfig.copyright) return null;
-
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
     const trigger = ScrollTrigger.create({
       trigger: section,
-      start: 'top 90%',
+      start: "top 90%",
       onEnter: () => {
         const tl = gsap.timeline();
 
@@ -39,15 +44,15 @@ export function Footer() {
         tl.fromTo(
           marqueeRef.current,
           { opacity: 0 },
-          { opacity: 1, duration: 1, ease: 'power2.out' }
+          { opacity: 1, duration: 1, ease: "power2.out" },
         );
 
         // Top border draw
         tl.fromTo(
           borderRef.current,
           { width: 0 },
-          { width: '100%', duration: 0.8, ease: 'expo.inOut' },
-          '-=0.5'
+          { width: "100%", duration: 0.8, ease: "expo.inOut" },
+          "-=0.5",
         );
 
         // Links column 1 stagger
@@ -56,8 +61,8 @@ export function Footer() {
             tl.fromTo(
               link,
               { x: -30, opacity: 0 },
-              { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' },
-              `-=${0.35 - i * 0.1}`
+              { x: 0, opacity: 1, duration: 0.4, ease: "power2.out" },
+              `-=${0.35 - i * 0.1}`,
             );
           }
         });
@@ -68,8 +73,8 @@ export function Footer() {
             tl.fromTo(
               link,
               { x: 30, opacity: 0 },
-              { x: 0, opacity: 1, duration: 0.4, ease: 'power2.out' },
-              `-=${0.35 - i * 0.1}`
+              { x: 0, opacity: 1, duration: 0.4, ease: "power2.out" },
+              `-=${0.35 - i * 0.1}`,
             );
           }
         });
@@ -78,8 +83,8 @@ export function Footer() {
         tl.fromTo(
           copyrightRef.current,
           { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' },
-          '-=0.2'
+          { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
+          "-=0.2",
         );
       },
       once: true,
@@ -92,6 +97,8 @@ export function Footer() {
     };
   }, []);
 
+  if (!footerConfig.copyright) return null;
+
   const marqueeText = footerConfig.marqueeText;
   const highlightChars = footerConfig.marqueeHighlightChars;
 
@@ -101,30 +108,27 @@ export function Footer() {
       className="relative pt-20 pb-12 px-8 lg:px-16 bg-black overflow-hidden"
     >
       {/* Marquee section */}
-      <div
-        ref={marqueeRef}
-        className="relative mb-20 overflow-hidden"
-      >
+      <div ref={marqueeRef} className="relative mb-20 overflow-hidden">
         {/* Gradient masks */}
         <div className="absolute left-0 top-0 bottom-0 w-40 bg-gradient-to-r from-black to-transparent z-10" />
         <div className="absolute right-0 top-0 bottom-0 w-40 bg-gradient-to-l from-black to-transparent z-10" />
 
         {/* Marquee content */}
         <div className="marquee-container">
-          <div className="marquee-content flex items-center gap-8 text-[56px] lg:text-[112px] font-medium whitespace-nowrap">
+          <div className="marquee-content flex items-center gap-8 text-[56px] lg:text-[80px] xl:text-[100px] font-medium whitespace-nowrap">
             {[...Array(4)].map((_, i) => (
               <span key={i} className="flex items-center gap-8">
-                {marqueeText.split('').map((char, j) => (
+                {marqueeText.split("").map((char, j) => (
                   <span
                     key={j}
                     className={
                       highlightChars.includes(char)
-                        ? 'text-highlight animate-pulse-glow'
-                        : 'text-white'
+                        ? "text-highlight animate-pulse-glow"
+                        : "text-white"
                     }
                     style={
                       highlightChars.includes(char)
-                        ? { textShadow: '0 0 20px var(--highlight)' }
+                        ? { textShadow: "0 0 20px var(--highlight)" }
                         : undefined
                     }
                   >
@@ -142,7 +146,7 @@ export function Footer() {
       <div
         ref={borderRef}
         className="h-px bg-white/20 mb-16"
-        style={{ willChange: 'width' }}
+        style={{ willChange: "width" }}
       />
 
       {/* Footer content */}
@@ -217,12 +221,9 @@ export function Footer() {
           ref={copyrightRef}
           className="mt-20 pt-8 border-t border-white/10 flex flex-col lg:flex-row justify-between items-center gap-4"
         >
-          <p className="text-body-sm text-white/40">
-            {footerConfig.copyright}
-          </p>
-          <p className="text-body-sm text-white/30">
-            {footerConfig.tagline}
-          </p>
+          <p className="text-body-sm text-white/40">{footerConfig.copyright}</p>
+          <p className="text-body-sm text-white/20">Made with ❤️ by OSKADUSI</p>
+          <p className="text-body-sm text-white/30">{footerConfig.tagline}</p>
         </div>
       </div>
     </footer>
