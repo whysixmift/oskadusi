@@ -1,6 +1,23 @@
 import { getDb } from "./index";
 import bcrypt from "bcryptjs";
 
+type TableColumn = {
+  name: string;
+};
+
+function ensureColumn(
+  columns: Set<string>,
+  table: string,
+  name: string,
+  definition: string,
+): void {
+  if (columns.has(name)) return;
+
+  const db = getDb();
+  db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
+  columns.add(name);
+}
+
 export function runMigrations(): void {
   const db = getDb();
 
@@ -20,6 +37,46 @@ export function runMigrations(): void {
       updated_at  TEXT    NOT NULL DEFAULT (datetime('now')),
       read_time   INTEGER NOT NULL DEFAULT 3
     )
+  `);
+
+  const postColumns = new Set(
+    (db.prepare("PRAGMA table_info(posts)").all() as TableColumn[]).map(
+      (column) => column.name,
+    ),
+  );
+
+  ensureColumn(postColumns, "posts", "slug", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(postColumns, "posts", "title", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(postColumns, "posts", "excerpt", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(postColumns, "posts", "content", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(postColumns, "posts", "image", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(postColumns, "posts", "category", "TEXT NOT NULL DEFAULT 'Umum'");
+  ensureColumn(
+    postColumns,
+    "posts",
+    "author",
+    "TEXT NOT NULL DEFAULT 'OSKADUSI'",
+  );
+  ensureColumn(postColumns, "posts", "published", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(postColumns, "posts", "published_at", "TEXT");
+  ensureColumn(
+    postColumns,
+    "posts",
+    "created_at",
+    "TEXT NOT NULL DEFAULT ''",
+  );
+  ensureColumn(
+    postColumns,
+    "posts",
+    "updated_at",
+    "TEXT NOT NULL DEFAULT ''",
+  );
+  ensureColumn(postColumns, "posts", "read_time", "INTEGER NOT NULL DEFAULT 3");
+
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS posts_slug_unique
+    ON posts(slug)
+    WHERE slug <> ''
   `);
 
   db.exec(`
