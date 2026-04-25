@@ -36,6 +36,11 @@ function slugify(title: string) {
     .trim();
 }
 
+function titleFromContent(content: string) {
+  const heading = content.match(/^#\s+(.+)$/m)?.[1]?.trim();
+  return heading || "";
+}
+
 export function AdminPage() {
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem("oskadusi_admin_token"),
@@ -141,13 +146,27 @@ export function AdminPage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!token) return;
+
+    const inferredTitle = form.title.trim() || titleFromContent(form.content);
+    const payload = {
+      ...form,
+      title: inferredTitle,
+      slug: form.slug.trim() || slugify(inferredTitle),
+      content: form.content.trim(),
+    };
+
+    if (!payload.title || !payload.content) {
+      setSaveError("Judul dan konten wajib diisi");
+      return;
+    }
+
     setSaving(true);
     setSaveError("");
     try {
       if (view === "create") {
-        await api.createPost(token, form);
+        await api.createPost(token, payload);
       } else if (editingPost) {
-        await api.updatePost(token, editingPost.id, form);
+        await api.updatePost(token, editingPost.id, payload);
       }
       await loadPosts();
       setView("list");
