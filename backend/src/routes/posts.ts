@@ -154,13 +154,13 @@ router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
   const body: CreatePostDTO = req.body;
   
   // Try to get title from body or infer from content
-  const title = body.title?.trim() || titleFromContent(body.content || "");
-  const content = body.content?.trim() || "";
+  const title = (body.title || "").trim() || titleFromContent(body.content || "");
+  const content = (body.content || "").trim();
 
-  if (!title || !content) {
+  if (title.length === 0 || content.length === 0) {
     console.warn("[POSTS] Validation failed: missing title or content", { 
-      hasTitle: !!title, 
-      hasContent: !!content,
+      titleLength: title.length,
+      contentLength: content.length,
       bodyKeys: Object.keys(body)
     });
     

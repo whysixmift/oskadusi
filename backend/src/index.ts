@@ -16,6 +16,14 @@ app.use(corsMiddleware);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
+// Request Logger
+app.use((req, _res, next) => {
+  if (req.method !== "GET") {
+    console.log(`[DEBUG] ${req.method} ${req.url} - Body Keys:`, Object.keys(req.body || {}));
+  }
+  next();
+});
+
 // ─── API Routes ───────────────────────────────────────────────
 app.use("/api", apiRouter);
 
