@@ -51,43 +51,43 @@ export const api = {
       limit: String(limit),
     });
     if (category) params.set("category", category);
-    return request<PaginatedPosts>(`/posts?${params}`);
+    return request<PaginatedPosts>(`/posts/?${params}`);
   },
-  getPost: (slug: string) => request<BlogPost>(`/posts/${slug}`),
+  getPost: (slug: string) => request<BlogPost>(`/posts/${slug}/`),
 
   // Admin
   login: (username: string, password: string) =>
-    request<{ token: string; username: string }>("/auth/login", {
+    request<{ token: string; username: string }>("/auth/login/", {
       method: "POST",
       body: JSON.stringify({ username, password }),
     }),
 
   getAllPosts: (token: string) =>
-    request<BlogPostSummary[]>("/posts/all", {
+    request<BlogPostSummary[]>("/posts/all/", {
       headers: { Authorization: `Bearer ${token}` },
     }),
 
   getAdminPost: (token: string, id: number) =>
-    request<BlogPost>(`/posts/admin/${id}`, {
+    request<BlogPost>(`/posts/admin/${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
     }),
 
   createPost: (token: string, data: Partial<BlogPost>) =>
-    request<BlogPost>("/posts", {
+    request<BlogPost>("/posts/", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     }),
 
   updatePost: (token: string, id: number, data: Partial<BlogPost>) =>
-    request<BlogPost>(`/posts/${id}`, {
+    request<BlogPost>(`/posts/${id}/`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
     }),
 
   deletePost: (token: string, id: number) =>
-    request<void>(`/posts/${id}`, {
+    request<void>(`/posts/${id}/`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     }),

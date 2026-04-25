@@ -13,13 +13,23 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 
 // ─── Middleware ───────────────────────────────────────────────
 app.use(corsMiddleware);
-app.use(express.json({ limit: "10mb" }));
+
+// Raw body capture for debugging empty bodies
+app.use(express.json({ 
+  limit: "10mb",
+  verify: (req: any, _res, buf) => {
+    req.rawBody = buf.toString();
+  }
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // Request Logger
-app.use((req, _res, next) => {
+app.use((req: any, _res, next) => {
   if (req.method !== "GET") {
-    console.log(`[DEBUG] ${req.method} ${req.url} - Body Keys:`, Object.keys(req.body || {}));
+    console.log(`[DEBUG] ${req.method} ${req.url}`);
+    console.log(`[DEBUG] Content-Length: ${req.headers["content-length"]}`);
+    console.log(`[DEBUG] Raw Body Length: ${req.rawBody?.length || 0}`);
+    console.log(`[DEBUG] Body Keys:`, Object.keys(req.body || {}));
   }
   next();
 });
