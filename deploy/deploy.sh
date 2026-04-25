@@ -182,11 +182,11 @@ cd "$PROJECT_ROOT"
 
 if pm2 describe "$APP_NAME" >/dev/null 2>&1; then
   log "Process '$APP_NAME' found — restarting..."
-  pm2 restart ecosystem.config.js --update-env
+  pm2 restart ecosystem.config.cjs --update-env
   success "Process restarted"
 else
   log "Starting new process '$APP_NAME'..."
-  pm2 start ecosystem.config.js
+  pm2 start ecosystem.config.cjs
   success "Process started"
 fi
 
