@@ -101,9 +101,11 @@ export function AdminPage() {
   }
 
   function startEdit(post: BlogPostSummary) {
+    if (!token) return;
+
     setPostsLoading(true);
     api
-      .getPost(post.slug)
+      .getAdminPost(token, post.id)
       .then((full) => {
         setEditingPost(full);
         setForm({

@@ -34,7 +34,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     headers: { "Content-Type": "application/json", ...options?.headers },
     ...options,
   });
-  const json = await res.json();
+
+  const text = await res.text();
+  const json = text ? JSON.parse(text) : {};
+
   if (!json.success) throw new Error(json.error || "API Error");
   return json.data as T;
 }
@@ -60,6 +63,11 @@ export const api = {
 
   getAllPosts: (token: string) =>
     request<BlogPostSummary[]>("/posts/all", {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+
+  getAdminPost: (token: string, id: number) =>
+    request<BlogPost>(`/posts/admin/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     }),
 

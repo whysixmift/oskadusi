@@ -168,9 +168,10 @@ step "Running database migrations"
 cd "$BACKEND_DIR"
 NODE_ENV=production node -e "
   require('dotenv').config();
-  const { runMigrations, seedAdmin } = require('./dist/db/schema');
+  const { runMigrations, seedAdmin, seedSamplePosts } = require('./dist/db/schema');
   runMigrations();
   seedAdmin();
+  seedSamplePosts();
   console.log('Migrations complete.');
 "
 success "Database ready"

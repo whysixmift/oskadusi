@@ -20,12 +20,14 @@ function calculateReadTime(content: string): number {
 
 // Helper: generate slug from title
 function generateSlug(title: string): string {
-  return title
+  const slug = title
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .trim();
+
+  return slug || `post-${Date.now()}`;
 }
 
 // GET /api/posts — List published posts (public)
@@ -89,6 +91,32 @@ router.get("/all", requireAuth, (_req: AuthRequest, res: Response): void => {
   res.json({ success: true, data: posts });
 });
 
+// GET /api/posts/admin/:id — Get any post for admin editing
+router.get(
+  "/admin/:id",
+  requireAuth,
+  (req: AuthRequest, res: Response): void => {
+    const db = getDb();
+    const id = parseInt(req.params.id, 10);
+
+    if (Number.isNaN(id)) {
+      res.status(400).json({ success: false, error: "Invalid post id" });
+      return;
+    }
+
+    const post = db
+      .prepare("SELECT * FROM posts WHERE id = ?")
+      .get(id) as BlogPost | undefined;
+
+    if (!post) {
+      res.status(404).json({ success: false, error: "Post not found" });
+      return;
+    }
+
+    res.json({ success: true, data: post });
+  },
+);
+
 // GET /api/posts/:slug — Get single post by slug (public)
 router.get("/:slug", (req: Request, res: Response): void => {
   const db = getDb();
@@ -116,7 +144,7 @@ router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
     return;
   }
 
-  const slug = body.slug || generateSlug(body.title);
+  const slug = generateSlug(body.slug || body.title);
   const readTime = calculateReadTime(body.content);
   const now = new Date().toISOString();
 
@@ -161,8 +189,13 @@ router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
 // PUT /api/posts/:id — Update post (admin only)
 router.put("/:id", requireAuth, (req: AuthRequest, res: Response): void => {
   const db = getDb();
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id, 10);
   const body: UpdatePostDTO = req.body;
+
+  if (Number.isNaN(id)) {
+    res.status(400).json({ success: false, error: "Invalid post id" });
+    return;
+  }
 
   const existing = db.prepare("SELECT * FROM posts WHERE id = ?").get(id) as
     | BlogPost
@@ -181,37 +214,48 @@ router.put("/:id", requireAuth, (req: AuthRequest, res: Response): void => {
   const publishedAt =
     body.published && !existing.published ? now : existing.published_at;
 
-  db.prepare(
-    `UPDATE posts SET
-      slug        = COALESCE(?, slug),
-      title       = COALESCE(?, title),
-      excerpt     = COALESCE(?, excerpt),
-      content     = COALESCE(?, content),
-      image       = COALESCE(?, image),
-      category    = COALESCE(?, category),
-      author      = COALESCE(?, author),
-      published   = COALESCE(?, published),
-      published_at = ?,
-      read_time   = ?
-    WHERE id = ?`,
-  ).run(
-    body.slug ?? null,
-    body.title ?? null,
-    body.excerpt ?? null,
-    body.content ?? null,
-    body.image ?? null,
-    body.category ?? null,
-    body.author ?? null,
-    body.published !== undefined ? (body.published ? 1 : 0) : null,
-    publishedAt,
-    readTime,
-    id,
-  );
+  try {
+    db.prepare(
+      `UPDATE posts SET
+        slug        = COALESCE(?, slug),
+        title       = COALESCE(?, title),
+        excerpt     = COALESCE(?, excerpt),
+        content     = COALESCE(?, content),
+        image       = COALESCE(?, image),
+        category    = COALESCE(?, category),
+        author      = COALESCE(?, author),
+        published   = COALESCE(?, published),
+        published_at = ?,
+        read_time   = ?
+      WHERE id = ?`,
+    ).run(
+      body.slug ? generateSlug(body.slug) : null,
+      body.title ?? null,
+      body.excerpt ?? null,
+      body.content ?? null,
+      body.image ?? null,
+      body.category ?? null,
+      body.author ?? null,
+      body.published !== undefined ? (body.published ? 1 : 0) : null,
+      publishedAt,
+      readTime,
+      id,
+    );
 
-  const updated = db
-    .prepare("SELECT * FROM posts WHERE id = ?")
-    .get(id) as unknown as BlogPost;
-  res.json({ success: true, data: updated });
+    const updated = db
+      .prepare("SELECT * FROM posts WHERE id = ?")
+      .get(id) as unknown as BlogPost;
+    res.json({ success: true, data: updated });
+  } catch (err: unknown) {
+    if (err instanceof Error && err.message.includes("UNIQUE constraint")) {
+      res.status(409).json({
+        success: false,
+        error: "A post with this slug already exists",
+      });
+    } else {
+      throw err;
+    }
+  }
 });
 
 // DELETE /api/posts/:id — Delete post (admin only)
