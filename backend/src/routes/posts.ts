@@ -151,7 +151,13 @@ router.get("/:slug", (req: Request, res: Response): void => {
 // POST /api/posts — Create post (admin only)
 router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
   const db = getDb();
-  const body: CreatePostDTO = req.body;
+  
+  console.log(`[DEBUG] Incoming POST /api/posts`);
+  console.log(`[DEBUG] Content-Type: ${req.headers["content-type"]}`);
+  console.log(`[DEBUG] Body defined: ${!!req.body}`);
+  console.log(`[DEBUG] Body Keys: ${JSON.stringify(Object.keys(req.body || {}))}`);
+
+  const body: CreatePostDTO = req.body || {} as CreatePostDTO;
   
   // Try to get title from body or infer from content
   const title = (body.title || "").trim() || titleFromContent(body.content || "");
@@ -161,7 +167,7 @@ router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
     console.warn("[POSTS] Validation failed: missing title or content", { 
       titleLength: title.length,
       contentLength: content.length,
-      bodyKeys: Object.keys(body)
+      body: JSON.stringify(body).substring(0, 100)
     });
     
     res.status(400).json({ 
