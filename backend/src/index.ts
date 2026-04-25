@@ -14,21 +14,18 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 // ─── Middleware ───────────────────────────────────────────────
 app.use(corsMiddleware);
 
-// Raw body capture for debugging empty bodies
+// Bypass: Treat both application/json AND text/plain as JSON 
+// (Fixes body loss on some proxies like Hack Club Nest)
 app.use(express.json({ 
   limit: "10mb",
-  verify: (req: any, _res, buf) => {
-    req.rawBody = buf.toString();
-  }
+  type: ["application/json", "text/plain"] 
 }));
 app.use(express.urlencoded({ extended: true }));
 
 // Request Logger
-app.use((req: any, _res, next) => {
+app.use((req, _res, next) => {
   if (req.method !== "GET") {
-    console.log(`[DEBUG] ${req.method} ${req.url}`);
-    console.log(`[DEBUG] Content-Length: ${req.headers["content-length"]}`);
-    console.log(`[DEBUG] Raw Body Length: ${req.rawBody?.length || 0}`);
+    console.log(`[DEBUG] ${req.method} ${req.url} - Content-Type: ${req.headers["content-type"]}`);
     console.log(`[DEBUG] Body Keys:`, Object.keys(req.body || {}));
   }
   next();
