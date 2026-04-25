@@ -37,8 +37,18 @@ function slugify(title: string) {
 }
 
 function titleFromContent(content: string) {
-  const heading = content.match(/^#\s+(.+)$/m)?.[1]?.trim();
-  return heading || "";
+  // 1. Try to find a Markdown H1 header: # Title
+  const headingMatch = content.match(/^#\s+(.+)$/m);
+  if (headingMatch?.[1]) return headingMatch[1].trim();
+
+  // 2. If no H1, take the first non-empty line that isn't a code block or special char
+  const lines = content.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+  for (const line of lines) {
+    if (line.startsWith("~~~") || line.startsWith("```") || line.startsWith("---")) continue;
+    return line.substring(0, 60);
+  }
+  
+  return "";
 }
 
 export function AdminPage() {
