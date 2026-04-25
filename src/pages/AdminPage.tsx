@@ -156,7 +156,7 @@ export function AdminPage() {
     };
 
     if (!payload.title || !payload.content) {
-      setSaveError("Judul dan konten wajib diisi");
+      setSaveError("Judul dan Konten Utama wajib diisi. (Ringkasan/Deskripsi bersifat opsional)");
       return;
     }
 
@@ -376,14 +376,14 @@ export function AdminPage() {
             {/* Excerpt */}
             <div className="lg:col-span-2">
               <label className="block text-xs text-white/40 mb-2 uppercase tracking-wider">
-                Ringkasan
+                Ringkasan / Deskripsi Singkat
               </label>
               <textarea
                 value={form.excerpt}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, excerpt: e.target.value }))
                 }
-                placeholder="Deskripsi singkat artikel..."
+                placeholder="Deskripsi singkat artikel untuk kartu blog..."
                 rows={2}
                 className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 text-sm focus:outline-none focus:border-[#ea0000] transition-colors duration-200 resize-none"
               />
@@ -392,7 +392,7 @@ export function AdminPage() {
             {/* Content */}
             <div className="lg:col-span-2">
               <label className="block text-xs text-white/40 mb-2 uppercase tracking-wider">
-                Konten (Markdown didukung)
+                Konten Utama (Markdown didukung) *
               </label>
               <textarea
                 value={form.content}

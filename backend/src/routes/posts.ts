@@ -140,13 +140,26 @@ router.get("/:slug", (req: Request, res: Response): void => {
 router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
   const db = getDb();
   const body: CreatePostDTO = req.body;
+  
+  // Try to get title from body or infer from content
   const title = body.title?.trim() || titleFromContent(body.content || "");
   const content = body.content?.trim() || "";
 
   if (!title || !content) {
-    res
-      .status(400)
-      .json({ success: false, error: "Title and content are required" });
+    console.warn("[POSTS] Validation failed: missing title or content", { 
+      hasTitle: !!title, 
+      hasContent: !!content,
+      bodyKeys: Object.keys(body)
+    });
+    
+    res.status(400).json({ 
+      success: false, 
+      error: !title && !content 
+        ? "Title and content are required" 
+        : !title 
+          ? "Title is required (or add a # Heading to your content)" 
+          : "Content is required"
+    });
     return;
   }
 
@@ -180,14 +193,13 @@ router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
     res.status(201).json({ success: true, data: post });
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes("UNIQUE constraint")) {
-      res
-        .status(409)
-        .json({
-          success: false,
-          error: "A post with this slug already exists",
-        });
+      res.status(409).json({
+        success: false,
+        error: "A post with this slug already exists",
+      });
     } else {
-      throw err;
+      console.error("[POSTS] Error creating post:", err);
+      res.status(500).json({ success: false, error: "Internal server error" });
     }
   }
 });
