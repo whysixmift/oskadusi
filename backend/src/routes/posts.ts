@@ -30,6 +30,10 @@ function generateSlug(title: string): string {
   return slug || `post-${Date.now()}`;
 }
 
+function titleFromContent(content: string): string {
+  return content.match(/^#\s+(.+)$/m)?.[1]?.trim() || "";
+}
+
 // GET /api/posts — List published posts (public)
 router.get("/", (req: Request, res: Response): void => {
   const db = getDb();
@@ -136,16 +140,18 @@ router.get("/:slug", (req: Request, res: Response): void => {
 router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
   const db = getDb();
   const body: CreatePostDTO = req.body;
+  const title = body.title?.trim() || titleFromContent(body.content || "");
+  const content = body.content?.trim() || "";
 
-  if (!body.title || !body.content) {
+  if (!title || !content) {
     res
       .status(400)
       .json({ success: false, error: "Title and content are required" });
     return;
   }
 
-  const slug = generateSlug(body.slug || body.title);
-  const readTime = calculateReadTime(body.content);
+  const slug = generateSlug(body.slug || title);
+  const readTime = calculateReadTime(content);
   const now = new Date().toISOString();
 
   try {
@@ -156,9 +162,9 @@ router.post("/", requireAuth, (req: AuthRequest, res: Response): void => {
       )
       .run(
         slug,
-        body.title,
+        title,
         body.excerpt || "",
-        body.content,
+        content,
         body.image || "",
         body.category || "Umum",
         body.author || "OSKADUSI",
