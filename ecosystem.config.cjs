@@ -3,8 +3,8 @@
 // Hack Club Nest Deployment
 //
 // Usage:
-//   pm2 start ecosystem.config.js           # start production
-//   pm2 start ecosystem.config.js --env dev # start development
+//   pm2 start ecosystem.config.cjs           # start production
+//   pm2 start ecosystem.config.cjs --env dev # start development
 //   pm2 stop oskadusi                        # stop
 //   pm2 restart oskadusi                     # restart
 //   pm2 logs oskadusi                        # view logs

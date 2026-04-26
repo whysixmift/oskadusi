@@ -69,7 +69,7 @@ oskadusi/
 │   ├── README.md           # This file
 │   ├── nginx.conf          # nginx reverse proxy config
 │   └── deploy.sh           # Automated deployment script
-├── ecosystem.config.js     # PM2 process configuration
+├── ecosystem.config.cjs    # PM2 process configuration
 ├── .env.example            # Frontend environment template
 └── backend/.env.example    # Backend environment template
 ```
@@ -188,7 +188,7 @@ node -e "
 
 # 6. Start with PM2
 cd ..
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 ```
 
 ### Development mode (local machine)
