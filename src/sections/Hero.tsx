@@ -206,7 +206,7 @@ export function Hero() {
       >
         {/* Main title */}
         <img
-          src="/LOGO_OSKADUSI.png"
+          src="/LOGO_OSKADUSI.webp"
           alt="title"
           className="max-w-[700px] md:max-w-[1000px] mx-auto block"
           style={{

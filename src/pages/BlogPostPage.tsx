@@ -117,7 +117,7 @@ export function BlogPostPage() {
             Semua Artikel
           </Link>
           <img
-            src="/LOGO_OSKADUSI.png"
+            src="/LOGO_OSKADUSI.webp"
             alt="OSKADUSI"
             className="h-7 opacity-60"
           />

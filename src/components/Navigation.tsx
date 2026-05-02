@@ -57,7 +57,7 @@ export function Navigation() {
             className="flex items-center gap-3 group"
           >
             <img
-              src="/LOGO_OSKADUSI.png"
+              src="/LOGO_OSKADUSI.webp"
               alt={navigationConfig.logo}
               className="h-10 w-auto object-contain"
               style={{ filter: "drop-shadow(0 0 8px rgba(255,255,255,0.1))" }}

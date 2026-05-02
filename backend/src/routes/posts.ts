@@ -89,6 +89,28 @@ router.get("/all", requireAuth, (_req: AuthRequest, res: Response): void => {
   res.json({ success: true, data: posts });
 });
 
+// GET /api/posts/admin/:id — Get any single post by id (admin only)
+router.get("/admin/:id", requireAuth, (req: AuthRequest, res: Response): void => {
+  const db = getDb();
+  const id = parseInt(req.params.id, 10);
+
+  if (!Number.isInteger(id)) {
+    res.status(400).json({ success: false, error: "Invalid post id" });
+    return;
+  }
+
+  const post = db
+    .prepare("SELECT * FROM posts WHERE id = ?")
+    .get(id) as BlogPost | undefined;
+
+  if (!post) {
+    res.status(404).json({ success: false, error: "Post not found" });
+    return;
+  }
+
+  res.json({ success: true, data: post });
+});
+
 // GET /api/posts/:slug — Get single post by slug (public)
 router.get("/:slug", (req: Request, res: Response): void => {
   const db = getDb();

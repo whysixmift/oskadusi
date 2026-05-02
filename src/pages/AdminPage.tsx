@@ -101,9 +101,10 @@ export function AdminPage() {
   }
 
   function startEdit(post: BlogPostSummary) {
+    if (!token) return;
     setPostsLoading(true);
     api
-      .getPost(post.slug)
+      .getAdminPost(token, post.id)
       .then((full) => {
         setEditingPost(full);
         setForm({
@@ -114,7 +115,7 @@ export function AdminPage() {
           image: full.image,
           category: full.category,
           author: full.author,
-          published: full.published,
+          published: Boolean(full.published),
         });
         setSaveError("");
         setView("edit");
@@ -129,7 +130,7 @@ export function AdminPage() {
           image: post.image,
           category: post.category,
           author: post.author,
-          published: post.published,
+          published: Boolean(post.published),
         });
         setView("edit");
       })
@@ -177,7 +178,7 @@ export function AdminPage() {
         <div className="w-full max-w-sm">
           <div className="mb-10">
             <img
-              src="/LOGO_OSKADUSI.png"
+              src="/LOGO_OSKADUSI.webp"
               alt="OSKADUSI"
               className="h-10 mb-6 opacity-80"
             />
@@ -446,7 +447,7 @@ export function AdminPage() {
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <img
-              src="/LOGO_OSKADUSI.png"
+              src="/LOGO_OSKADUSI.webp"
               alt="OSKADUSI"
               className="h-8 opacity-80"
             />
