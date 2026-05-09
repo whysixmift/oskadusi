@@ -165,6 +165,10 @@ def _download_media(url: str) -> tuple[Path, str]:
     work_dir.mkdir(parents=True, exist_ok=False)
 
     output_template = str(work_dir / "%(title).120B-%(id)s.%(ext)s")
+    
+    # Path to cookies.txt in the same directory as the script
+    cookies_path = Path(__file__).parent / "cookies.txt"
+    
     options = {
         "format": "bestvideo+bestaudio/best",
         "merge_output_format": "mp4",
@@ -180,6 +184,9 @@ def _download_media(url: str) -> tuple[Path, str]:
             }
         },
     }
+
+    if cookies_path.exists():
+        options["cookiefile"] = str(cookies_path)
 
     try:
         with YoutubeDL(options) as ydl:
