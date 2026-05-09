@@ -19,6 +19,10 @@ from telegram import Update
 from telegram.constants import ChatAction
 from telegram.ext import Application, CommandHandler, ContextTypes
 from yt_dlp import YoutubeDL
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 AUTHORIZED_TELEGRAM_USER_ID = 7669464229
 
