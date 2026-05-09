@@ -172,10 +172,11 @@ def _download_media(url: str) -> tuple[Path, str]:
         "outtmpl": output_template,
         "quiet": True,
         "restrictfilenames": True,
+        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
         "extractor_args": {
             "youtube": {
-                "player_client": ["android", "web"],
-                "skip": ["dash", "hls"],
+                "player_client": ["ios", "android"],
+                "player_skip": ["web", "web_embedded", "web_music", "mweb", "tv", "tv_embedded"],
             }
         },
     }
