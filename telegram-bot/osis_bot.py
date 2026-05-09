@@ -172,6 +172,12 @@ def _download_media(url: str) -> tuple[Path, str]:
         "outtmpl": output_template,
         "quiet": True,
         "restrictfilenames": True,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "web"],
+                "skip": ["dash", "hls"],
+            }
+        },
     }
 
     try:
