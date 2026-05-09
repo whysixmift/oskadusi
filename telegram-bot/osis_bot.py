@@ -176,19 +176,15 @@ def _download_media(url: str) -> tuple[Path, str]:
         "outtmpl": output_template,
         "quiet": True,
         "restrictfilenames": True,
-        "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
     }
 
     if cookies_path.exists():
         options["cookiefile"] = str(cookies_path)
-        # When using cookies, we MUST use web-based clients because ios/android clients don't support them
-        options["extractor_args"] = {
-            "youtube": {
-                "player_client": ["web", "mweb"],
-            }
-        }
+        # Use a standard Desktop User-Agent when using cookies
+        options["user_agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"
     else:
-        # Fallback to mobile clients if no cookies are available
+        # Fallback to mobile stealth if no cookies
+        options["user_agent"] = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1"
         options["extractor_args"] = {
             "youtube": {
                 "player_client": ["ios", "android"],
