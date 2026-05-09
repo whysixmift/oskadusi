@@ -32,6 +32,27 @@ export function runMigrations(): void {
   `);
 
   db.exec(`
+    CREATE TABLE IF NOT EXISTS blog_posts (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      title       TEXT    NOT NULL,
+      content     TEXT    NOT NULL,
+      author      TEXT    NOT NULL DEFAULT 'OSKADUSI',
+      timestamp   TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS system_logs (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      level       TEXT    NOT NULL DEFAULT 'info',
+      source      TEXT    NOT NULL DEFAULT 'system',
+      message     TEXT    NOT NULL,
+      metadata    TEXT,
+      created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+
+  db.exec(`
     CREATE TRIGGER IF NOT EXISTS update_posts_updated_at
     AFTER UPDATE ON posts
     BEGIN

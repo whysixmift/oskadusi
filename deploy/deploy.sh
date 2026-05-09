@@ -8,7 +8,7 @@
 #   ./deploy/deploy.sh
 #
 # What this script does:
-#   1. Pulls latest code from git
+#   1. Pulls latest code from git, unless SKIP_GIT_PULL=1 is set
 #   2. Installs/updates frontend dependencies
 #   3. Builds the React frontend (Vite)
 #   4. Installs/updates backend dependencies
@@ -73,7 +73,9 @@ step "Pulling latest code"
 
 cd "$PROJECT_ROOT"
 
-if git rev-parse --git-dir >/dev/null 2>&1; then
+if [ "${SKIP_GIT_PULL:-0}" = "1" ]; then
+  warn "SKIP_GIT_PULL=1 — skipping git pull"
+elif git rev-parse --git-dir >/dev/null 2>&1; then
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
   log "Current branch: $CURRENT_BRANCH"
 

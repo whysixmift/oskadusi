@@ -8,25 +8,9 @@ import {
   ApiResponse,
   PaginatedResponse,
 } from "../types";
+import { calculateReadTime, generateSlug } from "../utils/posts";
 
 const router = Router();
-
-// Helper: calculate read time from content
-function calculateReadTime(content: string): number {
-  const wordsPerMinute = 200;
-  const wordCount = content.trim().split(/\s+/).length;
-  return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
-}
-
-// Helper: generate slug from title
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
 
 // GET /api/posts — List published posts (public)
 router.get("/", (req: Request, res: Response): void => {
